@@ -73,7 +73,7 @@ int test_sorting(int *numbers, int count, compare_cb cmp)
     int *sorted = bubble_sort(numbers, count, cmp);
 
     //if(!sorted) die("Failed to sort as requested.");
-	check_mem(sorted);
+	
 
     for(i = 0; i < count; i++) {
         printf("%d ", sorted[i]);
@@ -98,24 +98,24 @@ int main(int argc, char *argv[])
     char **inputs = argv + 1;
 
     int *numbers = malloc(count * sizeof(int));
-    /*int *result;*/
+	int *result = NULL;
 	check_mem(numbers);	
 	/*check_mem(result);*/
 
     for(i = 0; i < count; i++) {
         numbers[i] = atoi(inputs[i]);
     }
-	/*result = bubble_sort(numbers, count, sorted_order);*/
-	/*check_mem(result);*/
+	result = bubble_sort(numbers, count, sorted_order);
+	check_mem(result);
 	
 	check(test_sorting(numbers, count, sorted_order) == 0, "test_sorting sorted order failed");
 	check(test_sorting(numbers, count, reverse_order) == 0, "test_sorting reverse order failed.");
 	check(test_sorting(numbers, count, strange_order) == 0, "test_sorting strange order failed.");
 
     free(numbers);
-	/*free(result);*/
+	free(result);
     return 0;
 error:
-	/*if (result) free(result);*/
+	if (result) free(result);
 	return 1;
 }

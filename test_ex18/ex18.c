@@ -4,16 +4,6 @@
 #include <string.h>
 #include "dbg.h"
 
-void die(const char *message)
-{
-    if(errno) {
-        perror(message);
-    } else {
-        printf("ERROR: %s\n", message);
-    }
-
-    exit(1);
-}
 // a typedef creates a fake type, in this
 // case for a function pointer
 typedef int (*compare_cb)(int a, int b);
@@ -34,34 +24,29 @@ int *bubble_sort(int *numbers, int count, compare_cb cmp)
     memcpy(target, numbers, count * sizeof(int));
 
     for(i = 0; i < count; i++) {
-        for(j = 0; j < count - 1; j++) {
-            if(cmp(target[j], target[j+1]) > 0) {
-                temp = target[j+1];
-                target[j+1] = target[j];
-                target[j] = temp;
-            }
-        }
+	for(j = 0; j < count - 1; j++) {
+	    if(cmp(target[j], target[j+1]) > 0) {
+		temp = target[j+1];
+		target[j+1] = target[j];
+		target[j] = temp;
+	    }
+	}
     }
+    memcpy(numbers, target, count * sizeof(int));
 
-    return target;
+    free(target);
+    return numbers;
 
 error:	
-	if (target) free(target);
-	return NULL;
+    /* No need to check, it's wasn't allocated. Give up */
+    return NULL;
 }
 
 int sorted_order(int a, int b) {return a - b;}
 
-int reverse_order(int a, int b){return b - a;}
+int reverse_order(int a, int b) {return b - a;}
 
-int strange_order(int a, int b){
-  if(a == 0 || b == 0) {
-    return 0;
-  } else {
-    return a % b;
-  }
-}
-
+int strange_order(int a, int b) {return (a && b) ? a % b : 0;}
 
 /** 
  * Used to test that we are sorting things correctly
@@ -71,51 +56,45 @@ int test_sorting(int *numbers, int count, compare_cb cmp)
 {
     int i = 0;
     int *sorted = bubble_sort(numbers, count, cmp);
-
-    //if(!sorted) die("Failed to sort as requested.");
-	
+    check(sorted, "Failed to sort");
 
     for(i = 0; i < count; i++) {
-        printf("%d ", sorted[i]);
+	printf("%d ", sorted[i]);
     }
     printf("\n");
 
-    free(sorted);
-	return 0;
-error:
-	if (sorted) free(sorted);
-	return 1;
-}
+    return 0;
 
+error:
+    return 1;
+}
 
 int main(int argc, char *argv[])
 {
-    //if(argc < 2) die("USAGE: ex18 4 3 1 5 6");
-	check( argc >= 2, "USAGE: ex18 4 3 1 5 6");
 
     int count = argc - 1;
     int i = 0;
     char **inputs = argv + 1;
+    int *numbers = NULL;
+    int *result = NULL;
 
-    int *numbers = malloc(count * sizeof(int));
-	int *result = NULL;
-	check_mem(numbers);	
-	/*check_mem(result);*/
+    check( argc >= 2, "USAGE: ex18 4 3 1 5 6");
+    numbers = malloc(count * sizeof(int));
+    check_mem(numbers);
 
     for(i = 0; i < count; i++) {
-        numbers[i] = atoi(inputs[i]);
+	numbers[i] = atoi(inputs[i]);
     }
-	result = bubble_sort(numbers, count, sorted_order);
-	check_mem(result);
-	
-	check(test_sorting(numbers, count, sorted_order) == 0, "test_sorting sorted order failed");
-	check(test_sorting(numbers, count, reverse_order) == 0, "test_sorting reverse order failed.");
-	check(test_sorting(numbers, count, strange_order) == 0, "test_sorting strange order failed.");
+    result = bubble_sort(numbers, count, sorted_order);
+    check(result, "Failed to sort");
+
+    check(test_sorting(numbers, count, sorted_order) == 0, "test_sorting sorted order failed");
+    check(test_sorting(numbers, count, reverse_order) == 0, "test_sorting reverse order failed.");
+    check(test_sorting(numbers, count, strange_order) == 0, "test_sorting strange order failed.");
 
     free(numbers);
-	free(result);
     return 0;
 error:
-	if (result) free(result);
-	return 1;
+    if (numbers) free(numbers);
+    return 1;
 }

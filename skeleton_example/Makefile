@@ -18,6 +18,7 @@ TESTS = hello_tests
 .PHONY: all build clean clobber tags test
 
 all: $(MODULES) $(TESTS)
+# $ (MODULES) was first
 
 $(MODULES): build
 	cd src/$@ && $(MAKE) $(COMMAND)
@@ -36,7 +37,7 @@ clean clobber:
 	@$(MAKE) $(MODULES) COMMAND=$@
 	rm -f tests/*.o tests/*_tests
 	rm -rf bin build
-	rm -r bin build
+#	rm -r bin build
 
 tags:
 	rm -f ./tags

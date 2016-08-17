@@ -1,0 +1,149 @@
+it's from my zshrc file:
+[10:17:38] Peter Nechaev: make_func() {
+if [ $# -eq 2 -a "$2" == "dev" ]; then
+args=( $1 COMMAND=$2 )
+else
+args=( $@ )
+fi
+cerr=$(echo -e "\033[1;31m")
+cwarn=$(echo -e "\033[1;35m")
+cdbg=$(echo -e "\033[1;33m")
+cbold=$(echo -e "\033[1;39m")
+cend=$(echo -e "\033[0m")
+grc make $args | sed -E -e "s%(error)\ (\(.*?\):)%$cerr\1 $cbold\2$cend%g" \
+-e "s%(warning)\ (\(.*?\):)%$cwarn\1 $cbold\2$cend%g" \
+-e "s%(info)\ (\(.*?\):)%$cbold\1 \2$cend%g" \
+-e "s%(debug)\ (\(.*?\):)%$cdbg\1 $cbold\2$cend%g" \
+-e "s%FAILED%$cerr&$cend%g"
+}
+alias make=make_func
+
+ that's how I made "dev" flag
+[10:18:12] Peter Nechaev: to include debug messages
+[10:18:35] Peter Nechaev: like make hello - normal build, make hello dev - build with debug
+
+ jose dim1: and what about $(command) in the $(modules) target?
+[10:38:25] Peter Nechaev: I just explained
+[10:38:48] Peter Nechaev: make module dev with transform into make module COMMAND=dev
+[10:39:44] Peter Nechaev: then you go to the src/hello/Makefile and see 'dev' target
+
+ok, so what's happening in test targets
+[15:20:46] Peter Nechaev: $(TESTS): MODULE = $(patsubst %_tests,%,$@) - generate module name from test suit name
+[15:21:29] Peter Nechaev: $(TESTS): CFLAGS+=-DDEBUG - add debug flags (required to build test/test_name)
+[15:21:41] Peter Nechaev: $(TESTS): build - create build directory
+[15:24:01] Peter Nechaev: @$(MAKE) $(MODULE) COMMAND=test - go to module with command test =>
+=> $(MODULES): build
+	@cd src/$@ && $(MAKE) $(COMMAND) - go to src/module and do make test =>
+ in src/hello 
+test : CFLAGS += -DDEBUG
+test : lib - build library with debug flag
+[15:24:59] Peter Nechaev: @$(MAKE) tests/$@ CFLAGS+=-Isrc/$(MODULE) LDLIBS+=$(BUILD_DIR)/lib$(MODULE).a
+make tests/test_suite using include files from src/module/ and library libmodule.a
+
+
+you said @$(MAKE) $(MODULE) COMMAND=test - go to module with command test =>
+=> $(MODULES): build
+	@cd src/$@ && $(MAKE) $(COMMAND) - go to src/module and do make test =>
+ in src/hello
+[19:38:01] jose dim1: but the variable MODULE and the other one MODULES are not the same variables.
+[19:38:49] jose dim1: and when you in go into src/hello because of cd src/$@ when do you go out of the directory?
+[19:42:18] Peter Nechaev: never.
+	@$(MAKE) $(MODULE) COMMAND=test - this executes another copy of make, which goes to src/$@
+[19:42:23] Peter Nechaev: tell you what
+[19:42:59] Peter Nechaev: delete all @ before commands, like in this:  
+@$(MAKE) $(MODULE) COMMAND=test change to
+$(MAKE) $(MODULE) COMMAND=test
+[19:43:16] Peter Nechaev: then you'll see everything that make is doing
+[19:43:45] Peter Nechaev: same with @echo, @cd etc.
+
+ … $(TESTS): MODULE = $(patsubst %_tests,%,$@)
+[19:46:13] Peter Nechaev: it generated from module_test
+[19:46:43] Peter Nechaev: like if you type make hello_tests; MODULE will be "hello"
+
+ Peter Nechaev: also I have some comments on his Makefile
+[19:48:56] Peter Nechaev: # EXERCISE 28: Intermediate Makefiles
+URL: http://c.learncodethehardway.org/book/ex28.html
+################
+FILE: Makefile
+5	SOURCES=$(wildcard src/**/*.c src/*.c)
+6	OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
+Using recursively expanded variables as a result of
+wildcard/patsubst/shell is not recommended
+LINKS: https://www.gnu.org/software/make/manual/html_node/Flavors.html
+################
+FILE: Makefile
+34	tests: CFLAGS += $(TARGET)
+On Linux this is not going to work. Like you said in ex29 the order is important
+for some reason, so I think the correct way is to use LDLIBS:
+	tests: LDLIBS += $(TARGET)
+
+ We can discuss my makefile in wednesday. I can provide it with detailed comments
+[19:51:08] Peter Nechaev: also my version of minunit
+[19:52:04] jose dim1: maybe tommorrow i will skip what i did nt understand in ex28 (zed s makefile) and look ex 30 and 31
+[19:52:25] jose dim1: and i will go back later on ex28 when i will compile a project
+[19:54:00] Peter Nechaev: did you finish ex 29?
+[19:54:44] jose dim1: i think i need to change somthing in the extra credit
+[19:55:40] jose dim1: they say to rename ex29.c and rename it and put it in tests/ex29_tests.c
+[19:56:36] jose dim1: but i need to write a little program to do commands like ./ex29 ./libex29.so print_a_message "hello there"
+[19:59:22] jose dim1: shall i write a bash script for doing this?
+[20:04:59] Peter Nechaev: you may write rule in Makefile for this
+[20:05:24] Peter Nechaev: test:
+        ./ex29 ./libex29.so print_a_message "hello"
+[20:05:33] Peter Nechaev: then do make test
+[20:05:49] jose dim1: you forgot sh before /.ex29
+[20:05:54] jose dim1: (maybe sh is optionnal)
+
+
+ex30------------------------
+
+make all 
+cc -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG  -fPIC   -c -o src/libex29.o src/libex29.c
+src/libex29.c: In function ‘fail_on_purpose’:
+src/libex29.c:42:33: warning: unused parameter ‘msg’ [-Wunused-parameter]
+ int fail_on_purpose(const char *msg)
+                                 ^
+ar rcs build/libex29.a src/libex29.o
+ranlib build/libex29.a
+cc -shared -o build/libex29.so src/libex29.o
+cc -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG  build/libex29.so    tests/ex29_tests.c  -ldl -o tests/ex29_tests
+In file included from tests/ex29_tests.c:1:0:
+tests/ex29_tests.c: In function ‘main’:
+tests/minunit.h:15:38: warning: parameter ‘argc’ set but not used [-Wunused-but-set-parameter]
+ #define RUN_TESTS(name) int main(int argc, char *argv[]) {\
+                                      ^
+tests/ex29_tests.c:64:1: note: in expansion of macro ‘RUN_TESTS’
+ RUN_TESTS(all_tests);
+ ^
+-----------------Now running target tests-----------------
+sh ./tests/ex29_tests
+./tests/ex29_tests: 1: ./tests/ex29_tests: ELF: not found
+./tests/ex29_tests: 2: ./tests/ex29_tests: Syntax error: "(" unexpected
+Makefile:38 : la recette pour la cible « tests » a échouée
+make: *** [tests] Erreur 2
+
+the test_2_fail function will stop after mu_asser(fail_hello() == 0); and we will not be able to know if mu_assert(hello() == 40) passed or not.
+[08:50:22] jose dim1: your struct __mu_failure records the first failure encountered in test_2_fail. I thought that it will be cool if we can record all the failures in a test function like test_2_fail, so I imagine using a linked list, with struct __mu_failure *next; inside of __mu_failure. Can you tell me if that is a good idea? If not, why?
+[08:53:51] jose dim1: I ll try to see if I can code something. But I don t promise anything.
+[09:57:40] Peter Nechaev: that's the idea of test scenarios system. You write a scenario, in which every test somehow depends on previous test. For example:
+scenario1:
+allocate array
+fill array
+sort array
+remove array
+end
+[09:58:03] Peter Nechaev: if array allocation failed, you shouldn't try to fill it
+[09:59:23] Peter Nechaev: that will become more obvious when you'll start to create more complex parts of your library
+[10:00:01] Peter Nechaev: During the session I'll try to explain to you my makefile and why my version of minunit is better, than zed's
+[15:49:33] jose dim1: ah ok so my idea of record all failures of test_2_fail in a linked list is not a good one? so it is not worth coding it.
+[15:50:56] Peter Nechaev: depends on what you expect from your test scenario.
+
+ in your example, scenario 1 is equivalent to test_2_fail function?
+[15:54:45] Peter Nechaev: yes?..
+[15:56:52] jose dim1: ah ok. maybe i should forget my idea of recording all failures of a test function into a list, because in most of the cases, every test will depend on the previous test?
+[15:57:44] Peter Nechaev: maybe you should create some kind of variable, to define if the test should fail or contirue?
+
+
+
+
+
+

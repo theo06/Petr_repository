@@ -1,0 +1,195 @@
+ make hello
+./bin/hello
+make clean > /dev/null
+make hello dev
+./bin/hello
+make clean > /dev/null
+make hello lib
+make clean > /dev/null //ok
+make hello test
+make test
+make clean
+
+what does mu_tests variable contain?
+[10:28:00] Peter Nechaev: it's not a variable.
+ifeq ($(COMMAND),mu_tests) means if $(COMMAND) == "mu_tests"
+
+https://web.skype.com/xmmFallback?docid=0-neu-d3-f5613c6ce64eb40f1ce63dd0110e410a
+https://web.skype.com/xmmFallback?docid=0-neu-d2-6935349eac9903c778ba56070cac4064
+not good
+bashrc https://login.skype.com/login/sso?go=webclient.xmm&docid=0-cus-d2-ad0ddc7635778cfacf967a8c224b35d7
+ Ok, so I fucked up the perfect explanation..
+Let's try to keep it short.
+# In project like this (library with separate modules), or kernel, where you have dozens of drivers,
+you want to be able to build only one of them.
+There's two ways to accomplish this: 1 - go to modules directory and run 'make'; 2 - run 'make module';
+I always work in root directory (that's where I store tags and cscope files), so I use the second way.
+So, I need to create rules for every module in the list. But that would make Makefile too long and
+hard to read. That's why I store rules inside modules directory (like src/hello/Makefile)
+Here's basic Makefile syntax:
+VARIABLE = VALUE
+target : deps
+	rule
+So, I store the list of modules into MODULES variable and do the following:
+MODULES = hello
+$(MODULES): build <= If target is in MODULES list, do
+	cd src/$@ && $(MAKE) <= go to src/target and run 'make' there
+# But I also want to be able to build module with or without debug messages.
+Again, there's two ways: 1 - run 'make module CFLAGS+=-DDEBUG'; 2 - run 'make module dev'.
+The first way is too hard to print, plus I don't know, if the module use DEBUG flag or something else.
+But you can't just do 'make module dev'. make will think, that you have two targets: module and dev.
+That's why I use simple trick. I create a new variable, called COMMAND, where I store dev parameter.
+	cd src/$@ && $(MAKE) $(COMMAND)
+So, now if you do 'make module COMMAND=dev', this will happen:
+cd src/module && make dev
+But I'm too lazy to write COMMAND=something, that's why I modify bashrc
+
+ $(MAKE) not always equals to 'make'
+[11:17:27] Peter Nechaev: like $(CC) not always 'gcc'
+
+ Basically the same thing with tests.
+Only here I decided not to write 'make hello_tests', which is long, but write 'make hello test'
+[11:20:32] Peter Nechaev: wchich will be interpreted as 'make hello COMMAND=mu_tests'
+[11:21:12] Peter Nechaev: which here:
+	@$(MAKE) $(patsubst %,%_tests,$@)
+will simply run 'make hello_tests'
+[11:22:50] jose dim1: what happens when it will run make hello_tests ?
+
+Peter Nechaev: Makefile : line 40
+[11:23:53] Peter Nechaev: $(TESTS): MODULE = $(patsubst %_tests,%,$@) <= if target is in TESTS list, do:
+[11:31:43] Peter Nechaev: so?..
+[11:32:23] jose dim1: it will do make hello COMMAND=test
+[11:33:21] Peter Nechaev: I mean, did you finish reading?
+[11:33:47] jose dim1: yeah but i dont understand everything
+[11:33:56] Peter Nechaev: What exactly?
+[11:34:22] jose dim1: the $(TESTS) rule
+[11:35:21] jose dim1: for example if we do make hello test it will run make hello_tests and because hello_tets is in TESTS list, it will do
+[11:35:33] jose dim1: MODULE= hello
+[11:35:59] jose dim1: then make hello COMMAND= test will run another instance of make
+[11:36:42] jose dim1: and because hello is in MODULES list it will run
+[11:37:14] Peter Nechaev: it will run
+cd src/hello && make test
+[11:37:17] Peter Nechaev: so?
+[11:38:46] jose dim1: no it will not run cd src/hello && make test it will run 	@$(MAKE) $(patsubst %,%_tests,$@)
+[11:39:25] Peter Nechaev: no it won't
+[11:39:38] Peter Nechaev: COMMAND==test, not mu_tests
+[11:40:12] jose dim1: but in make_func() we have
+[11:40:16] jose dim1:  if [ $# -eq 2 ]; then
+        case $2 in
+            dev)
+                args="$1 COMMAND=dev"
+                ;;
+            lib)
+                args="$1 COMMAND=lib"
+                ;;
+            test)
+                args="$1 COMMAND=mu_tests"
+                ;;
+            *)
+                args=$@
+                ;;
+        esac
+    else
+        args=$@
+    fi
+
+
+Peter Nechaev: in terminal: make hello test =>
+in bashrc: make hello COMMAND=mu_tests =>
+in make 27: make hello_tests =>
+in make 45: make hello COMMAND=test =>
+in make 30: cd src/hello && make test
+[11:44:03] jose dim1: ah ok bashrc is only used at the beginning
+[11:44:18] Peter Nechaev: It only used in terminal
+[11:44:33] Peter Nechaev: make runs by itself. It doesn't need bash
+[11:45:10] jose dim1: ok so if write $(MAKE) inside a Makefile, it will run another instance of the Makefile without lookking into the bashrc
+[11:45:38] Peter Nechaev: another instance of make, not makefile
+[11:45:49] Peter Nechaev: in the working directory
+
+jose dim1: to go back to what you said, it will do cd src/hello && make test
+[11:47:32] jose dim1: it will cd into src/hello and create build/libhello.a library
+[11:48:17] jose dim1: but after doing this, make returns to the root directory?
+[11:49:03] Peter Nechaev: the instanse you run in line 45 exits and your makefile continues
+[11:49:34] Peter Nechaev: and the parent instanse always was in root directory
+[11:50:09] jose dim1: when you exits the instance run in line 45, you also cd ../.. to go back to the parent instance directory?
+[11:50:31] Peter Nechaev: The parent instanse always in root
+[11:50:34] jose dim1: i mean it cd ../.. automatically?
+[11:50:37] Peter Nechaev: no need to go back
+[11:50:56] Peter Nechaev: another instanse just exited, no need for it to go back either
+[11:51:15] Peter Nechaev: It's like running bash script inside the bash script
+[11:51:27] Peter Nechaev: or having a dream inside a dream
+[11:51:56] Peter Nechaev: if you die in the second dream, you don't have to go back to life in first dream
+[11:52:20] Peter Nechaev: it's simply another process
+[11:52:28] Peter Nechaev: it doesn't affect main instance
+[11:52:37] jose dim1: ok
+[11:53:53] jose dim1: so next instruction will be make test/hello_tests CFLAGS+=-Isrc/hello LDLIBS+=build/libhello.a
+[11:54:23] jose dim1: but what will it do? because there is no test/hello_tests target.
+[11:54:36] jose dim1: is it an implicit rule?
+
+
+ Peter Nechaev: http://c.learncodethehardway.org/book/ex2.html
+[11:55:27] Peter Nechaev: make will look for a file module.c
+[11:55:40] Peter Nechaev: in the directory tests/
+[11:56:20] jose dim1: you mean a file called hello_tests.c in the directory tests/ ?
+[11:56:27] Peter Nechaev: yes
+[11:56:31] jose dim1: and do like ex2 of zed
+[11:57:52] jose dim1: If i well understood, your skeleton's makefile doesn t work without the latest make_func() you gave me?
+[11:58:20] Peter Nechaev: well, no
+[11:58:34] Peter Nechaev: makefile works perfectly
+[11:58:46] Peter Nechaev: you just have to use COMMAND=... syntax
+[11:59:17] jose dim1: ok, so each time i run your skeleton makefile it is better to include your make_func() inside my bashrc.
+[11:59:39] Peter Nechaev: em.. no
+[11:59:49] Peter Nechaev: it's just an example
+[11:59:57] Peter Nechaev: you implement only the parts you like
+[12:00:31] Peter Nechaev: I like it this way, you may want something else
+[12:01:47] jose dim1: i have an idea. maybe i can keep only this part of your make_func(), to be able to use your makefile
+[12:01:48] jose dim1: if [ $# -eq 2 ]; then
+        case $2 in
+            dev)
+                args="$1 COMMAND=dev"
+                ;;
+            lib)
+                args="$1 COMMAND=lib"
+                ;;
+            test)
+                args="$1 COMMAND=mu_tests"
+                ;;
+            *)
+                args=$@
+                ;;
+        esac
+    else
+        args=$@
+    fi
+[12:02:21] jose dim1: and don t keep this part, to add my own grc colours into conf.gcc (because grc make use conf.gcc)
+[12:02:24] jose dim1: cerr=$(echo -e "\033[1;31m")
+    cwarn=$(echo -e "\033[1;35m")
+    cdbg=$(echo -e "\033[1;33m")
+    cbold=$(echo -e "\033[1;39m")
+    cend=$(echo -e "\033[0m")
+
+    grc make $args | sed -E -e "s%(error)\ (\(.*?\):)%$cerr\1 $cbold\2$cend%g" \
+        -e "s%(warning)\ (\(.*?\):)%$cwarn\1 $cbold\2$cend%g" \
+        -e "s%(info)\ (\(.*?\):)%$cbold\1 \2$cend%g" \
+        -e "s%(debug)\ (\(.*?\):)%$cdbg\1 $cbold\2$cend%g" \
+        -e "s%FAILED%$cerr&$cend%g"
+[12:02:46] Peter Nechaev: of course
+
+: ok and when doing make clean
+[12:07:34] jose dim1: it will run another instance of make: make hello COMMAND=clean
+[12:08:04] jose dim1: and because hello is inside $(MODULES) it will run $(MODULES)
+[12:08:19] jose dim1: cd src/hello && make clean
+[12:08:58] jose dim1: and if we do make clean and MODULES = hello list
+[12:09:39] Peter Nechaev: it will do make clean for every moduel
+[12:09:42] Peter Nechaev: in list
+
+ $(MAKE) $(MODULES) COMMAND=clean is the same as make hello COMMAND=clean && make list COMMAND=clean ?
+[14:47:49] Peter Nechaev: almost.
+[14:48:10] Peter Nechaev: like make module1 module2 - will build both
+[14:48:58] Peter Nechaev: COMMAND here is a variable (like CFLAGS). So, yes, it will do what you said but inside one make command
+[14:49:08] Peter Nechaev: not inside one bash instruction
+
+
+
+
+

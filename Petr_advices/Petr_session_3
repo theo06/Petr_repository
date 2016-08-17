@@ -1,0 +1,88 @@
+jose dim1: i just wanted to ask you smthing. if you have     int i = 0x00AABB4C;
+[10:09:20] Peter Nechaev: Title: lessons.tar.gz Description: lessons.tar.gz https://login.skype.com/login/sso?go=webclient.xmm&docid=0-neu-d1-c730c5ee4754da251bcd523ee7e811e4
+[10:09:38] Peter Nechaev: do
+make ex2 && ./run_ex2.sh
+[10:10:15] jose dim1: and do short sh = i, i got on     printf("inti : %X; short sh: %X\n", i, sh);
+inti : AABB4C; short sh: FFFFBB4C
+[10:10:46] jose dim1: if i do int i = 0x00AABB4C it is stored in memory as 4C BB AA 00
+[10:11:03] jose dim1: so th short will take the first two bytes, which is 4C BB
+[10:12:10] jose dim1: and you told me that printf will convert to int for the display %X, and add 00 00 after 4C BB because 4C is 0100 1100
+[10:12:55] jose dim1: so inside printf 4C BB becomes 4C BB 00 00, and should display BB 4C but it displays FF FF BB 4C
+[10:13:48] Peter Nechaev: em
+[10:14:13] Peter Nechaev: you should start counting with the last byte: BB
+[10:14:44] Peter Nechaev: b is 1011
+[10:15:17] Peter Nechaev: 4C BB - in memory. In reality it's BB 4C.
+[10:15:25] Peter Nechaev: so the first actual byte is BB
+[10:15:41] Peter Nechaev: and the first actual bit is 1
+
+ose dim1: by the way, I also tried this
+[10:19:30] jose dim1: int i = 0x00AABB4C;
+    char c = '\0';
+    short sh = 0x0;
+    int r;
+	char char_array[2];
+    memset(char_array, i, 2);
+    char **c_arr_cast = (char **) char_array;
+    printf("c_arr_cast == %p\n", *c_arr_cast);
+[10:19:57] jose dim1: and i got c_arr_cast == 0x7ffe1fac4c4c
+[10:20:51] jose dim1: so i think that in memory *c_arr_cast is 4c 4c ac 1f fe 7f 00 00
+[10:21:41] Peter Nechaev: you printing the address, not the values
+[10:21:54] Peter Nechaev: memset will set the values
+[10:21:55] Peter Nechaev: not the address
+[10:22:02] Peter Nechaev: read man memset
+
+hat's what I told you in ex1
+[10:40:55] Peter Nechaev: you take 2 bytes, add another 6 bytes from stack, filled with garbage, and print them
+[10:41:14] jose dim1: when you do int * piarr = (int*) arr in ex0
+[10:41:27] Peter Nechaev: so, first 2 bytes from array are filled with 4C
+[10:41:33] Peter Nechaev: so, what's the problem?
+
+jose dim1: i think i have understood. instead of storing 4C 4C into an int like you in ex0 i store it into a char * , which is a pointer (8 bytes wide).
+[10:42:52] Peter Nechaev: well, I guess you did
+[10:43:48] jose dim1: but i think in this case, because the size of char_array (2 bytes) is less than the size of char * , that the char ** c_arr_cast (which is an array of pointers) will contain only one pointer.
+[10:44:20] Peter Nechaev: what do you mean by 'one pointer'?
+[10:44:32] jose dim1: if i have well understood, in the case in which char_array size is more than 8 bytes, char ** c_arr_cast will contain two or more pointers.
+[10:44:41] Peter Nechaev: it's not an array of pointers
+[10:44:47] Peter Nechaev: it's a pointer to a pointer
+[10:45:00] Peter Nechaev: or pointer to an array in this case
+
+Hmmm. so what would happen if char_array size is more than 8 bytes?
+[10:46:06] Peter Nechaev: (char **) char_array; - pointer to an array of chars
+[10:47:12] Peter Nechaev: if char_array is more than 8 bytes, (char **)char_array is still a pointer and contains 8 bytes of address
+
+
+so, if char_array is 4C 4C 4C, c_arr_cast  will be 0x7ffcc44c4c4c
+[10:48:27] jose dim1: you mean *c_arr_cast?
+[10:48:45] Peter Nechaev: if char_array has 8 members of 4C, c_arr_cast will be 0x4c4c4c4c4c4c4c4c
+[10:49:03] Peter Nechaev: yes, I mean *c_arr_cast
+[10:49:27] Peter Nechaev: if char_array has more than 8 members of 4C, it's still the same
+[10:49:41] Peter Nechaev: if less, missing bytes will be filled with garbage
+[10:51:13] jose dim1: if char_array is more than 8 bytes, only the first 8 bytes will be copied into *c_arr_cast?
+
+Peter Nechaev: yes
+[10:54:08] jose dim1: ok. if you can make me a drawing on what happen exactly when we do  char **c_arr_cast = (char **) char_array;                                                                        I thank you in advance. It will be usefull for me.
+[10:54:34] Peter Nechaev: I think I already did this in ex0 and ex1
+[10:55:13] jose dim1: ok so just instead of an int it is a char*
+[10:55:24] jose dim1: i think you draw it in ex0
+[10:55:36] jose dim1: with (int*)
+[10:57:08] Peter Nechaev: line 74 ex1:
+instead of i you have char_arr,
+instead of c you have *c_arr_cast
+[10:57:16] Peter Nechaev: just expand it to the right
+
+ose dim1: where is a static variable stored?
+[11:07:33] jose dim1: ah in bss/data?
+[11:07:39] Peter Nechaev: bss/data.
+I'm not going to dig too deep in this.
+All you need to know, that it's a section in memory, where all the
+global/static variables are take place, and it's always initiialized.
+
+wait. what do you mean by saying
+[11:15:11] jose dim1: that in the bss/data there is initialization and no initialization in the stack data?
+[11:15:53] jose dim1: for example in test5 the static int b will be automatically initialized in 0 by the bss/data ?
+[11:16:22] Peter Nechaev: yes
+[11:17:37] jose dim1: and in the stack data it is not initialized if we type int a1; that s why there s garbage equals to 32767 in a1 when we print it?
+
+I mentioned, that it's almost impossible to overflow bss/data, but it actually has the same limitations, as heap (limited by your RAM space). The only difference, is that the malloc will raise an error condition and you can fix it during the execution, but if you overflow bss/data, the program will crash
+
+

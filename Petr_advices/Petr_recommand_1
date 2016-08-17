@@ -1,0 +1,316 @@
+[7/18/2016 6:18:04 PM] Petr Nechaev: Okay. I'm back.
+Until Thursday you should do the following:
+- Create a git repository on GitHub or xp-dev.com, or some other site and send me the url.
+- Install the software I mentioned before.
+- Go to http://c.learncodethehardway.org/book/ and read first 15 exercises. They cover basic syntax, so you shouldn't have problems with them. Try "Extra Credit" and "How To Break It" sections, but don't waste time on tasks you 100% sure you can easily complete.
+If you need translation, just download google translate extension (https://chrome.google.com/webstore/detail/google-translate/aapbdbdomjkkjkaonfhkkikfgjllcleb)
+- Do Upwork preparations: verify payment method, put money on your card. Get ready to pay every week. Upwork can ban my account, if I'll continue to work on suspended contract.
+
+Meanwhile, I'll make a plan that we'll stick to. Feel free to ask questions on Upwork or in Skype. I won't be available 24/7, but will check it every once in a while.
+It will be Thursday 11:00 for now. I'll let you know if anything changes.
+[7/18/2016 6:18:38 PM] Petr Nechaev: I'll duplicate this in Skype
+[7/18/2016 8:40:26 PM] theodoro nido: Hello Petr, I apologize I did things too quickly and I did a mistake. I clicked on hire freelancer button and entered an unauthorized type of credit card. I want to tell you that I will end the contract to make another one.
+[7/18/2016 8:43:51 PM] theodoro nido: is that okay with you?
+[7/18/2016 8:45:25 PM] Petr Nechaev: you can't change it now?
+[7/18/2016 8:46:32 PM] Petr Nechaev: well, sure, if it's the only choice.
+[7/18/2016 8:47:00 PM] Petr Nechaev: but try to make it in way which won't ruin my reputation on Upwork
+[7/18/2016 8:48:01 PM] theodoro nido: not at all because i want to work with you. I just need time because i need to talk to my bank.
+[7/18/2016 8:48:04 PM] Petr Nechaev: i just don't know how closed contracts with 0 hours affect your stats
+[7/18/2016 8:48:54 PM] Petr Nechaev: oh, you mean, you need more time
+[7/18/2016 8:49:24 PM] Petr Nechaev: okay, I guess.
+[7/18/2016 8:50:24 PM] theodoro nido: I am sorry but I have to cancel for thursday 11 AM. I need first to talk to my bank and to load money to paypal. I will come back to you later.
+[7/18/2016 8:51:03 PM] Petr Nechaev: okay, but meanwhile try to complete tasks I sent you.
+
+Good morning/noon/evening Sir,
+
+I made a mistake. I clicked on the "hire freelancer" button and I entered the number of a virtual credit card in the "hiring freelancer" web page, and then, I clicked on "hire freelancer". Later, I read that you do not accept virtual credit cards and I apologize for that.
+
+Currently, I have an active contract with a freelancer. I want him to teach me programming 90 minutes per week.
+We currently did 0 hours of work in the active contract.
+
+How can I cancel my virtual credit card number in "billings methods"?
+
+Am I forced to end the active contract with my freelancer in order to cancel my virtual credit card number? If so, will I be charged (and how much) for ending a contract?
+
+If I end a 0 hour contract, will it have a negative impact on my freelancer?
+
+Is it possible to remove my virtual credit card number (in the "billings methods") without ending the active contract with my freelancer?
+
+After the removal of my virtual credit card number,
+I want to pay with Paypal. So I will create a Paypal account and load money on it. Shall I load dollars or euros in my paypal electronic wallet?
+
+my email:
+dormoy.jeanmarie@gmail.com
+
+I thank you in advance for your help. Have a nice day.
+----------------------------------------------------
+
+2.Try read gnu emacs tour: http://www.gnu.org/software/emacs/tour/ 
+And CC mode manual: https://www.gnu.org/software/emacs/manual/html_node/ccmode/index.html
+These guides should cover all shortcuts you will need
+
+3. "what is the -g purpose when you do gcc -Wall -g main.c -o main?"
+-g flag generates debug information. You need this flag to see C code in gdb.
+-Wall flag turns on all warnings
+-Werror treats all warnings as errors. ALWAYS use this flag when you write/debug the program and turn off when distribute.
+Read gcc manual for more information
+
+3*. I really think it's better to read offline manuals when coding (not learning, I mean). It's much faster. There are great man pages for ligc and Linux API, that contain syntax, common bugs and examples, so you don't have to memorize everything. Emacs should have a shortcut that will open man for any word under cursor. In Vim it's 'K'.
+So, here is a little tip:
+Man pages are hard to read. To make them colored and enable search, add following lines to your ~/.bashrc file (it might be ~/.bash_profile on Ubuntu, I don't remember):
+export PAGER=less
+export LESS_TERMCAP_mb=$'\E[01;33m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;42;30m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+export LESS_TERMCAP_ue=$'\E[0m'
+Also, for better info pages install 'pinfo' package and use it instead, or create alias:
+alias info='pinfo'
+
+4. "What I want is that when a line of code is longer than the length of the window, emacs make automatically a new line <...>"
+Don't EVER make lines longer than 79 symbols. If you need more, end line with '\' and continue on the next line.
+If you want emacs to automatically break long lines, you probably want this: https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Fill.html
+If you don't like truncation, read this: https://www.gnu.org/software/emacs/manual/html_node/emacs/Continuation-Lines.html
+
+4*. "if I encounter too much problems in emacs, maybe I will use vim instead."
+Emacs may be hard to learn, but vim could be much harder. But if you'll think of it, tell me. I'll give you some advise about plugins, vimrc and also a table of basic commands to print.
+
+5. "i just did a sudo apt-get install valgrind. is it okay or shall I remove it and install valgrind from the latest source?"
+Last stable (ubuntu-stable) copy from repo should be fine. The book just suggests you to install something by yourself. If you never done it, won't hurt to try. Not valgrind, but something more lightweight.
+Most of the time installation can be done by this:
+./configure --prefix=/usr /* This command requires autoconf/autotools packages installed */
+make
+# make install
+Some programs contain ./autogen.sh script
+
+5*. If you want to learn how to install programs on Linux in a hardcore way, you may try LFS: http://www.linuxfromscratch.org/lfs/view/stable/
+This project challenges you to install whole Linux system from sources using autotools/make. But it's only for the guys with HUGE COJONAS.
+Also the process may take up to 5 hours, so don't do it now. Just keep in mind, that this stuff exists.
+
+to be continued...
+[19:07:09] Petr Skovoroda: 6. "i modified the exercise 15 in the book to try around:"
+%c prints only one char, so you probably wants %s here.
+printf("%s <...>\n", *cur_name)
+
+7. "You can check if I have understood by giving me additional exercises on pointers"
+You will have enough practice later. Every realization of complex data structures and algorithms operates with pointers.
+" i did 15 before 9 because I love pointers". I understand. Love them myself, and I think it's mutual... But don't do it again.
+
+8. "a friend told me there can be infinite number of indirections. To build high-dimensional arrays. like int **** ptr"
+That's idiotic. If you ever see the guy doing *******ptr, punch him in the face (don't do it, but stay really mad).
+If you see yourself doing this, it means you need some other data stucture (Yes, sometimes you need 2/3 dimensional arrays, but quite rarely).
+
+9. "you can also give me multiple indirections exercises for me to fully understand the concept."
+The concept that you should understand is simple: every variable and function places in the memory and can be accessed by it's address. Pointer is a variable that contains address.
+That's it. You don't need indirections to understand this.
+If you want to know, how memory works, I can give you some great articles. But I think we can do it later.
+
+10. "i find gdb more powerful than valgrind. because you can set breakpoints and see what the values contains step by step."
+Valgrind is very useful for memory leaks detection. gdb is a powerful debugger that one should use for precise error detection and printing log messages is not enough.
+
+11.  "I think you need to test me on how to break it and extra credit. I am a bit weak at finding errors with valg"
+Do the task and commit it to the repo. Then I'll check and maybe send you a patch with comments.
+
+12. "maybe you can give me programs which does errors and I must correct them using valgrind."
+Easy.
+
+int *array = calloc(50, sizeof(int));
+return 0;
+
+Try run valgrind on it.
+
+Actually later you will have to find memory leaks hidden in this book. As I said, there're plenty of mistakes.
+[19:07:59] Petr Skovoroda: ** About How To Break It section.
+It's actually a good idea. We may discuss your solutions during our sessions.
+[19:08:59] Petr Skovoroda: I hope I answered all your questions
+[19:29:26] Petr Skovoroda: Message supprimé.
+[19:30:48] Petr Skovoroda: *** If you have troubles reading manpages in English, install French package:
+# apt-get install manpages-fr
+[20:10:47] Petr Skovoroda: *** maybe you need some clarification on pointers after all.
+Obviously you think of it as some special data type. But it's not.
+Perhaps I should write a small article for you. Would be much easier to explain it via Skype and not wasting time on typing, but whatever.
+I just don't have time right now. Maybe later.
+
+ https://github.com/scrooloose/nerdtree/releases
+… your home folder contains your .vimrc file
+[11:35:33] Petr Skovoroda: ~/.vimrc
+[11:35:36] Petr Skovoroda: ~/.vim/
+[11:36:01] Petr Skovoroda: basic vim commands: http://free-electrons.com/doc/training/linux-kernel/vi_memento.pdf
+[11:36:14] Petr Skovoroda: great book: ftp://ftp.stust.edu.tw/pub/vim/doc/book/vimbook-OPL.pdf
+
+NERDTree readme file: https://github.com/scrooloose/nerdtree/blob/master/README.markdown
+Please, read the installation part.
+You can simply unpack it and put in .vim and load by yourself, but at first try any of this managers. 
+
+yes, you should create your own .vimrc You can also copy the existing one in your home folder
+[11:48:31] Petr Skovoroda: vim search in your folder, then shared, then system. All programs do
+
+updated help tags?
+[12:52:14] Petr Skovoroda: :helpt ~/.vim/path_to_plugins_doc_dir
+
+Title: vimrc Description: vimrc https://login.skype.com/login/sso?go=webclient.xmm&docid=0-neu-d3-1690659ce00e3c49dc65d44b9fb84d05
+
+write your own script for it in vimrc
+[13:02:52] Petr Skovoroda: something like <C-w><C-w>ZZ
+[13:03:05] Petr Skovoroda: this will close prevous window
+[13:03:17] Petr Skovoroda: you can redirect help to the new tab
+[13:03:19] Petr Skovoroda: if you don'
+[13:03:24] Petr Skovoroda: t want to close it
+[13:03:46] Petr Skovoroda: map your script to F1 and use
+[13:04:37] Petr Skovoroda: you can chech my previous .vimrc, It should have this script.
+[13:04:59] Petr Skovoroda: I just deleted it, because it's stupid
+
+ https://git-scm.com/book/fr/v2 - Read first 3 chapters
+[17:23:53] Petr Skovoroda: all commands you need to know: branch, tag, commit, fetch, merge, pull, checkout --, push, reset
+[17:25:12] Petr Skovoroda: [5:11 pm] jose dim1: If i well understood. vim-fugitive is a git plugin for vim. Do I need to study first git before studying fugitive.vim? 
+ 
+ <<<
+Yes
+[17:25:37] Petr Skovoroda: [5:13 pm] jose dim1: Is it worth it to write all the most common valgrind messages in a text file? In order to better recognize error? 
+<<<
+Dunno. If it'll help you
+[17:26:14] Petr Skovoroda: I use valgrind for memory leaks only
+[17:26:37] Petr Skovoroda: there's not much to remember
+[17:45:11] Petr Skovoroda: I also remembered couple of tips:
+vim: \cy - copy line under cursor and comment it. So if you want to do changes in config files, use \cyp to save original settings
+guake: best terminal emulator ever. Just install it, run and press F12
+tmux: amazing thing if you run vim in terminal. You won't need several terminal windows anymore. Remind me to send you config file for tmux
+shell: This will make colorful ls:
+alias ls='ls --color=auto'
+export LS_COLORS='no=00;37:fi=00;37:di=01;36:ln=04;36:pi=33:so=01;35:do=01;35:bd=33;01:cd=33;01:or=31;' 
+
+Colorful grep:
+alias grep='grep --color=auto'
+To make 'sort' and 'make' output colorful, install grc and add: 
+alias sort='grc sort'
+alias make='grc make'
+[17:55:09] Petr Skovoroda: Also. Here is cool git completion file: https://github.com/git/git/blob/master/contrib/completion/git-completion.bash
+
+… tu fais un git clone sur un dépo
+[10:07:19] Sébastien BURILLARD: git status montera que des fichier avec rien
+[10:07:30] Sébastien BURILLARD: git add -> A
+[10:07:38] Sébastien BURILLARD: vim sur un fichier du dépot -> M
+[10:07:48] Sébastien BURILLARD: git rm -> D
+[10:07:52] Sébastien BURILLARD: git mv -> R
+[10:07:55] Sébastien BURILLARD: git cp -> C
+
+et lorsque que je modifie un fichier j'ai du AM , X=A et Y=M
+[10:13:43] jose dim1: donc en gros avec en faisant git add unfichier, vim unfichier, et rm unfichier j'ai seulement réussi a obtenir les trois cas suivant:
+[10:13:54] jose dim1: X=A  Y=rien
+[10:14:06] jose dim1: X=A Y=M
+[10:14:10] jose dim1: X=A Y=D
+[10:15:05] jose dim1: et si je fais git rm unfichier il est carrément supprimé de la liste qu affiche git status --short.
+[10:15:55] Sébastien BURILLARD: je parlais de git mv sur un fichier qui est dans le répo
+[10:16:10] Sébastien BURILLARD: toi tu git mv un fichier que tu veux ajouter au répo
+[10:16:12] Sébastien BURILLARD: spa du tout ce que je te dis de faire
+[10:16:41] Sébastien BURILLARD: donc normal que t'as pas le meme code que je te dis si tu fais pas ce que je te dis
+
+je t'as dit de mv un fichier existant
+[10:18:38] Sébastien BURILLARD: toi tu ajoute un fichier puis tu le mv
+[10:18:41] Sébastien BURILLARD: spa du tout la meme chose
+[10:18:58] Sébastien BURILLARD: et non je connais pas
+[10:19:11] Sébastien BURILLARD: git status --help m'as toujours suffit pour ca, jamais eu besoin d'autre chose
+
+yes. look
+'git add folder' will add all files in folder recursively
+. - in Linux means current folder
+.. - means parent folder
+~ - means home folder
+So git add . in top git directory does the same thing as git add -A
+
+
+
+
+ I just think reading is much faster
+[13:56:53] Petr Nechaev: you can easily jump to the topics you're interested in
+[13:56:56] Petr Nechaev: anyway
+[13:57:16] Petr Nechaev: with fetch you downloaded something to your copy
+[13:57:42] Petr Nechaev: but until you merge it with your branch, it's in the other head
+[13:57:57] Petr Nechaev: so you have to merge it or checkout to it
+[13:58:09] Petr Nechaev: Depuis https://github.com/KokaKiwi/epitech.eblih
+* branch HEAD -> FETCH_HEAD
+[13:58:49] Petr Nechaev: see? You have to checkout to FETCH_HEAD to see this files
+[13:58:59] jose dim1: yes i see them now
+[13:59:34] jose dim1: but after doing git checkout FETCH_HEAD, if I commit, it will become a detached head?
+[14:00:00] Petr Nechaev: you will commit to FETCH_HEAD branch, yes
+[14:00:30] Petr Nechaev: it will be your own copy of other repo's head
+[14:01:00] jose dim1: ok thanks
+
+ jose dim1: yes i see them now
+[13:59:34] jose dim1: but after doing git checkout FETCH_HEAD, if I commit, it will become a detached head?
+[14:00:00] Petr Nechaev: you will commit to FETCH_HEAD branch, yes
+[14:00:30] Petr Nechaev: it will be your own copy of other repo's head
+[14:01:00] jose dim1: ok thanks
+[14:02:20] jose dim1: and if we imagine that I have the rights to write into this repository : https://github.com/KokaKiwi/epitech.eblih
+[14:03:18] jose dim1: i can push my local copy of this repo's head into github by doing git push https://github.com/KokaKiwi/epitech.eblih master  ?
+[14:04:09] Petr Nechaev: well, yes.
+But why imagine? You can always create empty repo on your disc doing git init, then fetch there your existing github repo
+
+
+
+
+jose dim1: I git fetch https://github.com/theo06/Petr_repository ( which is my github repository)
+[14:16:13] jose dim1: and then git checkout FETCH_HEAD to see files
+[14:16:31] jose dim1: I created a new file, git add it, and commited.
+[14:17:55] jose dim1: I want now to push FETCH_HEAD to the master branch in my github repository. I tried git push https://github.com/theo06/Petr_repository main
+[14:18:02] jose dim1: but it does not work
+[14:22:07] Petr Nechaev: what's main?
+[14:22:20] jose dim1: sorry not main, master
+[14:22:26] jose dim1: it is master
+[14:22:32] Petr Nechaev: if you want to push FETCH_HEAD you push FETCH_HEAD, not main
+[14:22:33] Petr Nechaev: nor master
+[14:22:40] Petr Nechaev: it doesn't have master
+[14:22:52] Petr Nechaev: unless you remotly attached it
+[14:23:09] Petr Nechaev: so you du git push https://repo FETCH_HEAD
+[14:23:16] Petr Nechaev: *do
+[14:23:49] Petr Nechaev: if you want to push master branch of this repo, add :master
+[14:24:07] Petr Nechaev: so it will be git push https://repo FETCH_HEAD:branch
+
+It looks like it is not possible to push FETCH_HEAD into the master branch of my github repository
+[14:47:33] jose dim1: is it because FETCH_HEAD opints direcly to a commit?
+[14:47:39] jose dim1: points*
+[14:53:05] jose dim1: I read somewhere that FETCH_HEAD is a detached pointer.
+[14:57:58] Petr Nechaev: yeah.. I was wrong, thinking you can just push commit remotely and make github do the job. Now I remember, I could only do that when I had a central repo installed on server.
+[14:58:13] Petr Nechaev: so yes, you have to merge it first somewhere
+[14:59:11] jose dim1: ok
+[14:59:22] Petr Nechaev: because someone have to merge it, right? And github won't do that for you
+[14:59:36] Petr Nechaev: On github you only have a full copy of your repo, nothing else
+[15:00:00] Petr Nechaev: that means, it can't process change requests
+
+Here, I found great article which can clarify all this detached thing: http://stackoverflow.com/questions/5772192/how-can-i-reconcile-detached-head-with-master-origin
+[15:01:17] jose dim1: ok I ll look a it.
+[16:17:25] jose dim1: hmm  you were right. To remind you about what I ve done; I mkdir my_repo on my disk, then cd my_repo and then git init.
+[16:17:37] jose dim1: then git fetch  https://github.com/theo06/Petr_repository
+[16:17:59] jose dim1: then git checkout FETCH_HEAD
+[16:19:13] jose dim1: then create a fetch_head file, git added it, commited it.
+[16:19:34] jose dim1: and finally git push  https://github.com/theo06/Petr_repository HEAD:master
+[16:20:05] jose dim1: I dont understand why it does work with HEAD:master and does not with FETCH_HEAD:master
+[16:21:49] Petr Nechaev: Did you read the article I sent?
+[16:22:19] Petr Nechaev: It explains the difference between repository and downloaded head.
+[16:22:49] Petr Nechaev: You can't just put commit somewhere and expect repository to be updated by itself
+[16:23:08] Petr Nechaev: You have to update your local copy, then send updates
+[16:23:12] Petr Nechaev: this includes head
+[16:23:18] jose dim1: I will read it again, more carefully.
+[16:24:07] Petr Nechaev: The most important thing about git is that you have full copy of repository on your computer
+[16:24:47] Petr Nechaev: github just has a public copy
+[16:25:23] Petr Nechaev: and in git you don't have central server to process changes
+[16:25:39] Petr Nechaev: You need to replace the whole repository with changed copy
+ that's why you can't just push one commit of detached head. Because it's pointing to a commit and does't say anything about repo itself
+
+
+Petr Nechaev: [5:17 pm] jose dim1: hmm  you were right. To remind you about what I ve done; I mkdir my_repo on my disk, then cd my_repo and then git init. 
+then git fetch https://github.com/theo06/Petr_repository
+then git checkout FETCH_HEAD
+then create a fetch_head file, git added it, commited it.
+ 
+     <<< 
+<...>
+To solve this you need to create new branch:
+git checkout -b fetched_branch
+then merge  FETCH_HEAD to it:
+git merge FETCH_HEAD
+then  push it as it's a master branch:
+git push  url HEAD:master
+

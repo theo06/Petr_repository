@@ -1,0 +1,49 @@
+ first question) with this call: Object_new(sizeof Monster, MonsterProto, "the evil minotaur");                                                                    if  we study what will happen inside object_new we have:         Object *el = calloc(1, size)
+[13:53:11] jose dim1: this instruction allocates a block of memory of size sizeof(Monster) and returns a pointer to this block of memory and store this pointer in el.
+[14:27:05] jose dim1: so el is a pointer to Object, and el points to a block of memory of size sizeof(Monster)
+[14:27:55] Peter Skovoroda: Upwork is working in EST, so it should happen today evening or tomorrow
+[14:29:18] jose dim1: does this mean that the memory block of size sizeof(Monster) is divided into two sub-blocks? one subblock of memory for the Object field and another subblock of memory for the int field?
+[14:29:29] Peter Skovoroda: no
+[14:30:06] Peter Skovoroda: I mean yes
+[14:30:10] jose dim1: lol ok
+[14:30:20] Peter Skovoroda: I read it wrong
+[14:30:26] jose dim1: so if we do *el = proto
+[14:31:24] jose dim1: this means that the object proto will be inserted in the sub-block of memory which corresponds to the field Object?
+[14:32:26] Peter Skovoroda: yes, it's the way to initialize structure.
+It stores values you put and fill other with 0
+[14:33:49] Peter Skovoroda: you forgot to paste this:
+Object MonsterProto = {
+.init = Monster_init,
+.attack = Monster_attack
+};
+[14:33:59] Peter Skovoroda: init and attack will be initialized
+
+[14:34:59] Peter Skovoroda: and other functions would be stored with default values, because of the first 5 lines of Object_new
+
+ Object MonsterProto = {
+.init = Monster_init,
+.attack = Monster_attack
+};/ variable type of 'Object'. contains Monster_init and Monster_attack. Others filled with 0 (for int/float/...) or NULL (for pointers) /
+
+void Object_new(size_t size, Object proto, char description)
+{ / here proto is a local COPY of variable MonsterProto /
+ if(!proto.init) proto.init = Object_init;
+if(!proto.describe) proto.describe = Object_describe; / here you fill missing values with default /
+
+… if in object_new we do *el=proto1;
+[14:52:26] jose dim1: then *el=proto2;
+[14:52:39] jose dim1: proto2 will overwrite proto1?
+[14:53:19] Peter Skovoroda: yes
+[14:54:38] jose dim1: in the sub block of memory which corresponds to the Object field in the block of memory of size sizeof(Monster) ?
+[14:57:17] jose dim1: and what if it is this way: struct Monster { int hit_points; Object proto}; how to to like *el = proto and storing proto in the good sub block of memory?
+[14:57:46] jose dim1: i mean how to do*
+[14:59:00] Peter Skovoroda: that won't work
+[14:59:02] Peter Skovoroda: I mean
+[14:59:20] jose dim1: will *(el +1) = proto work?
+[14:59:43] Peter Skovoroda: it will store init function address cut to int, and fill every object field, except the last one
+[14:59:53] Peter Skovoroda: ant el+1 won't work either
+[15:00:18] Peter Skovoroda: unless, you od (object *)((int*)el + 1)
+[15:00:23] Peter Skovoroda: or something like this
+[15:00:27] Peter Skovoroda: just try it
+[15:00:28] Peter Skovoroda: it's fun
+

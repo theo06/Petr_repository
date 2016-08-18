@@ -1,0 +1,296 @@
+jose dim1: Hello. I was charged 45.21 USD. Did you receive the payment?
+[09:41:59] jose dim1: I am looking for a good way to printf a function 's adress but what i found on google involves cast with unsigned char *
+[09:42:08] jose dim1: void print_func(void (*p)())
+{
+unsigned char *a = (unsigned char *)&p;
+size_t i, n = sizeof p;
+for(i = 0; i < n; i++) printf("%02X", (unsigned int)a[i]);
+}
+[10:09:27] Peter Skovoroda: I'll receive payment next Wednesday: https://support.upwork.com/hc/en-us/articles/211063698-Weekly-Billing-Cycle-for-Hourly-Contracts
+[10:09:50] Peter Skovoroda: you don't need to print in a cycle
+[10:10:11] Peter Skovoroda: just use printing method from the exercise I sent you
+[10:15:12] jose dim1: you mean cast the adress of the function with (unsigned char*= ?
+[10:15:34] jose dim1: i mean (unsigned char *)
+[10:49:46] jose dim1: the only way to print the address of a function for me is
+[10:49:48] jose dim1: int main() {
+    int (*funcptr)() = main;
+    unsigned char *p = (unsigned char *)&funcptr;
+    size_t i;
+
+    for (i = 0; i < sizeof funcptr; i++)
+    {
+        printf("%02x ", p[i]);
+    }
+    putchar('\n');
+
+    return 0;
+}
+[11:20:57] jose dim1: Hmm I want to write a function which takes a function in argument and prints its address.
+[11:34:08] jose dim1: Hmm i think I will give up today for this question:
+[11:34:09] jose dim1:  "  it will store init function address cut to int, and fill every object field, except the last one" when doing *el=proto with struct Monster { int hit_points; Object proto};
+[11:36:27] jose dim1: it is difficult and I have lost a lot of time already
+[11:37:58] jose dim1: but i think that in this situation the char* proto.description will be cast to an int and stored into el->hit_points
+[11:39:04] jose dim1: the adress of proto.init will be cast into a char* and stored into el->description
+[11:40:32] jose dim1: the adress of proto.description will be stored in el->init
+[11:41:02] jose dim1: the adress of proto.destroy will be stored in el->describe
+[11:42:21] jose dim1: the adress of proto.attack will be stored in el->destroy
+[11:43:01] jose dim1: and the adress of proto.move will be stored in el->attack
+[11:44:51] jose dim1: and i dont know what is stored in el->move
+[11:45:32] jose dim1: Hmm sorry el->hit_points make no sense because el is a pointer to an Object.
+[11:47:03] jose dim1: I think i will study 22 now, I will go back to this problem later.
+[11:50:42] jose dim1: and to solve the ex19 bonus problem (the one with int hit_points first and Object in second in struct Monster) i think it would be nice to write a function that takes any kind of function in argument and which print its address.
+[11:51:26] jose dim1: but i dont know if it is possible to write such a function because of the prototype of the function which is the argument
+[13:24:15] jose dim1: so maybe i need to write different print_function_adress to print the addresses of functions with different prototype.
+[16:19:57] jose dim1: an interesting question: why is it
+[16:20:00] jose dim1:  int main() {
+    int (*funcptr)() = main;
+    unsigned char *p = (unsigned char *)&funcptr;
+    size_t i;
+
+    for (i = 0; i < sizeof funcptr; i++)
+    {
+        printf("%02x ", p[i]);
+    }
+    putchar('\n');
+
+    return 0;
+}
+[16:20:15] jose dim1: unsigned char *p = (unsigned char *)&funcptr;
+and not without the ampersand?
+[16:42:15] jose dim1: I did not work on ex22 sorry, because I was helping a friend today and I lost time on the Monster{int hit_points; Object proto} and this story about getting a function adress. Because google told me that a pointer to a function cannot be cast to a void*, and that i cannot do a printf("%p", void* ptr_to_func);
+[16:43:25] jose dim1: that s why i foud more complex ways using a loop and a cast to unsigned char.
+[17:21:35] jose dim1: i think that i need this printing-adress-of-function function to understand what is going on in Monster[int , Object} and *el = proto;
+[18:57:02] jose dim1: we will meet tomorrow at 11 A.M. russian hour?
+[18:58:59] Peter Skovoroda: oh, man
+[18:59:21] Peter Skovoroda: it 35'C outside and my brains are boiling
+[18:59:31] Peter Skovoroda: I didn't understand anything
+[18:59:32] jose dim1: lol
+[18:59:56] Peter Skovoroda: what are you trying to say?
+Which exercises did you finish?
+[19:02:03] Peter Skovoroda: I created a small plan for you. In which we learn 1-25, skip ex26, read ex27 and start doing real stuff
+[19:02:12] jose dim1: I didn t have time to do ex22 because I was helping a friend this afternoon and I lost a lot of time this morning trying to understand the Monster{int hit_points; Object proto] thing
+[19:02:27] Peter Skovoroda: so?
+[19:02:40] Peter Skovoroda: ex19 is hard. which have you done?
+[19:02:48] Peter Skovoroda: 1-?\
+[19:02:51] jose dim1: ah
+[19:02:58] jose dim1: 1-20 i think
+[19:03:20] Peter Skovoroda: And you've completed ex21 before, haven't you?
+[19:03:24] jose dim1: i have read 21 as you told me
+[19:03:48] jose dim1: but i need to do an algorithm which uses things explained in 21. like uintptr_t, etc...
+[19:05:00] jose dim1: I really want to understand what does *el = proto does in the object_new function when you reverse the two field in Monster like this: Monster{int hit_points; Object proto}
+[19:05:26] jose dim1: that s why I needed a function which prints or return the adress of a function
+
+just think, what you do here:
+unsigned char p = (unsigned char )&ptr_func;
+	size_t i;
+	for (i = 0; i < sizeof ptr_func; i++)
+{
+printf("%02x ", p[i]);
+}
+[19:31:20] Peter Skovoroda: you create a pointer to pointer
+[19:31:38] Peter Skovoroda: then turn it into a pointer to an array of chars
+[19:31:46] Peter Skovoroda: then print every element of the array]
+[19:32:03] Peter Skovoroda: you already have the pointer
+[19:32:07] Peter Skovoroda: which is address
+[19:32:13] Peter Skovoroda: just print it
+[19:32:18] Peter Skovoroda: you can also use %p
+
+Peter Skovoroda: pointer is 8 bytes, right?
+[19:33:13] jose dim1: yes
+[19:33:27] Peter Skovoroda: remember the ex0 I sent you?
+[19:33:40] Peter Skovoroda: I turned array of chars into int
+[19:33:41] jose dim1: yes
+[19:33:46] Peter Skovoroda: you doing the reverse thing
+[19:33:48] Peter Skovoroda: why?
+[19:34:38] Peter Skovoroda: you rurn pointer (8 bytes) into an array of 8 chars (1 byte)
+[19:34:48] Peter Skovoroda: and print them
+[19:34:54] Peter Skovoroda: IN REVERSE ORDER
+[19:34:57] Peter Skovoroda: why?
+[19:35:07] jose dim1: it is not my code
+[19:35:15] Peter Skovoroda: I understand
+[19:35:16] jose dim1: It is from stackoverflow
+[19:35:27] Peter Skovoroda: just you may fix it
+
+tried int i = 0xFFAABBCC and did     c = i;
+    printf("int: %X; char: %X\n", i, c);
+an i got int: FFAABBCC; char: FFFFFFCC
+I read somewhere that with printf, the char is convert into an int. is it correct?
+[11:13:30] jose dim1: c is a char.
+[11:15:27] Peter Skovoroda: yes, I believe it does. It converts everything lower than 4 bytes to int
+[11:17:20] jose dim1: so in memory, the char c contains CC, but in printf, with the %X on c it adds CC FF FF FF in the temporary variable which will be displayed in %X?
+[11:17:55] jose dim1: which is displayed as FF FF FF CC? (in reverse order because of little endian)
+[11:18:04] Peter Skovoroda: not exactly
+[11:18:35] Peter Skovoroda: it adds FFFFFF to negative values and 000000 to positive
+[11:20:03] Peter Skovoroda: because in memory it doesn't make any difference, but in human readable way the first bit represents -/+
+[11:20:59] Peter Skovoroda: I mean adding additional bytes doesn't make any difference
+
+Hmm I think I dont understand what is stdin when used inside a function.
+[16:29:56] jose dim1: when we are doing fgetc(stdin); inside read_scan, stdin is the keyboard input, right?
+[16:45:12] jose dim1: for me it should be i++; instead of fgetc(stdin) . I don t understand why we get a character from user's keyboard. I think the only thing that matters if the char* fmt.
+[17:56:09] Peter Skovoroda: int read_string(char **out_string, int max_buffer)
+{
+<...>
+ char *result = fgets(*out_string, max_buffer, stdin);
+[17:57:13] Peter Skovoroda: just read read_scan() closely
+[17:57:23] Peter Skovoroda: it reads from stdin
+[18:01:57] Peter Skovoroda: Zed just means, that if you put "number=%d" in read_scan() it will only handle %d and skip 'number='
+[18:03:17] Peter Skovoroda: you expect the input data to be of the same format as declared in *fmt
+[18:06:28] Peter Skovoroda: if not, the result is unpredictable.
+Like if the *fmt is "name: %s" and you put "Alexander", the result will be "der"
+[18:09:53] Peter Skovoroda: so if you expect formatted input from user, you should store result from fgetc and check it.
+[18:12:22] Peter Skovoroda: In this particular example it's not necessary, and therefore not covered. Because if you'll try to resolve every conflict you can come up with, you'll have to rewrite the entire scanf function, and that's not the point of the exercise.
+
+se dim1: wait please. inside the function read_scan, when we do fgetc(stdin), we get a char from the keyboard?
+[18:19:05] Peter Skovoroda: yes
+[18:19:48] jose dim1: I am talking about the fgetc(int) in the else.
+[18:21:09] jose dim1: For me, the only thing important is the char* fmt, I don t understand why we need to move the file position indicator of stdin to the next character
+[18:21:26] Peter Skovoroda: again
+[18:21:40] Peter Skovoroda: if you expect format to be %d, user should put 17
+[18:21:53] jose dim1: ok
+[18:21:57] Peter Skovoroda: if you expect format to be number=%d, user should put "number=17"
+[18:22:11] Peter Skovoroda: that's why you should move format and input
+[18:28:18] Peter Skovoroda: if you still don't get it, add
+rc = read_scan("age=%d", &age); 
+to main, delete fgetc from else condition, and see, what will happen
+
+
+[18:44:24] jose dim1: in fact if i have the code just like Zed (with the fgetc in the else condition) and in if i put     rc = read_scan("age=%d", &age);
+in the main function, i got an infinite loop. the program never ends.
+[18:45:00] jose dim1: I put 18 but i think there s an infinite loop.
+[18:46:56] jose dim1: i dont understand. There should be a feof and the check should display "Input error." in the terminal.
+[18:54:01] jose dim1: Ah. you told me that in that case, the result is unpredictable.
+
+Hmm. i was thinking with pen and paper on this case: read_scan("age=%d", &age);
+where you put in input age=18 and I have a question. Is the FILE* stdin which contains age=18 the same as the one which will be used in read_int (i mean the stdin  inside of read_string) ?
+[19:05:36] jose dim1: is it possible to use read_scan like this: read_scan("%d%d", &a, &b); where a and b are integers?
+[19:11:41] jose dim1: i think it is not possible but it is hard to explain (it has to do with stdin). tell me if i am wrong please.
+[19:14:28] Peter Skovoroda: how did you put this into an infinite loop?
+
+Peter Skovoroda: I think the program just waits for additional input
+[19:15:52] Peter Skovoroda: I mean, if you do this:
+rc = read_scan("age=%d", &age);
+[19:16:04] Peter Skovoroda: and then put 17 into stdin
+[19:16:22] Peter Skovoroda: it waits for additional character and int
+[19:16:45] jose dim1: ah ok
+[19:17:06] Peter Skovoroda: because it suppose to treat \n as another character, so 17\n is 3 chars and you need additional "=17"
+[19:17:18] Peter Skovoroda: I might be wrong, so test it
+[19:18:29] Peter Skovoroda: feof will raise at ^D character, not \n
+[19:20:23] jose dim1: i think you re right. 17\n=17 then press enter works
+
+Peter Skovoroda: [19:05:36] jose dim1: is it possible to use read_scan like this: read_scan("%d%d", &a, &b); where a and b are integers?
+No, you need delimiter. You can create a realization, where it may be possible.
+[19:26:09] Peter Skovoroda: now you can't actually do it even with a delimiter.
+[19:26:44] Peter Skovoroda: because you read 100 symbols from string, not the word
+
+%d%d realization may be possible, if you expect defined amount of numbers in int.
+[19:29:22] Peter Skovoroda: for example
+[19:29:35] Peter Skovoroda: if you expect int to be less than 1000
+[19:30:29] Peter Skovoroda: you need to read less than 4 chars, so
+%d%d 998999 will store 998 999
+[19:30:39] Peter Skovoroda: 10001 will store 100 1
+[19:30:48] Peter Skovoroda: But I don't see how it can be useful
+[19:31:49] jose dim1: ok, so let s forget it. And what about my stdin question? (just before the read_scan("%d%d) question)
+[19:33:32] Peter Skovoroda: Is the FILE* stdin which contains age=18 the same as the one which will be used in read_int (i mean the stdin  inside of read_string) ? >>>
+stdin is the standart stream 0. It's the same for the entire process
+[19:34:10] Peter Skovoroda: now all your programms are running in one process
+[19:34:56] jose dim1: so if char ** fmt is "age=%d" and stdin is age=18 the fgetc(stdin) will move the file position indicator at the 1
+[19:37:01] jose dim1: and then when read_int will be called (and thus, read_string), the call to fgets in read_string will copy what is inside stdin between the file position indicator (which is pointing at 1) and EOF of stdin?
+[19:37:14] jose dim1: so 18 will be copied into *outstring?
+[19:40:43] Peter Skovoroda: yes
+[19:41:04] Peter Skovoroda: you can treat it like simple file
+[19:42:47] Peter Skovoroda: but it doesn't reach EOF
+[19:43:02] Peter Skovoroda: it just reads 100 symbols (or as much, as it can) and exits
+
+jose dim1: in fact fgets in read_string will never read 99 symbols because if char *fmt is "age=%d" and stdin is age=1234\n with fgetc(stdin) the file position indicator of stdin will point to 1 and fgets will read from 1 to \n, and fgets will copy 1234\n into *output_string.
+[09:53:16] jose dim1: because I think that fgets stop reading after \n, but includes \n into the string.
+[09:54:47] jose dim1: If I remember well, I tested something and I found that if you put the char* "1234\n" into atoi(), it will convert it to int 1234, even if there is a \n a the end of the char* .
+[10:19:28] jose dim1: I read somewhere that atoi() is dangerous because if it returns 0, you don't know if it is because the string is not convertible into an int, or if it is because the char * is equals to "\0".
+[10:56:53] jose dim1: Hmm. maybe you can give me an exercise, like code a program which takes user input with stdin or with another FILE* and which uses other functions than fgets, the problems with fgets is that it stops when it encounter a \n .
+
+this looks cool: http://202.74.245.22:8080/xmlui/bitstream/handle/123456789/522/Advanced%20C%201992.pdf?sequence=1
+[15:09:47] jose dim1: I dont understand why do I have this output when I delete fgetc(stdin) in the else condition: the program asks me my last name and my age at the same time.
+[15:10:17] jose dim1:  ./ex25 
+What's your first name? Jean
+What's your initial? J
+What's your last name? How old are you? Nido18
+How old are you bis? age=18
+---- RESULTS ----
+First Name: Jean
+Initial: 'J'
+Last Name: 
+Age: 0
+[16:43:47] jose dim1: I read again the program but there are no displays of check errors messages in the program's execution...
+[17:00:47] jose dim1: apparently in the line     rc = read_scan("%s", MAX_DATA, &last_name);
+I checked with gdb and last_name contains "\n"
+[17:08:08] jose dim1: Hmmm. What my instincts tell me is that the \n character comes from the previous call to read_scan. Either it is because of the read_scan("%c\n", &initial); the %c\n or it is because the stdin needs to be emptied between the call     rc = read_scan("%c\n", &initial);
+and the call     rc = read_scan("%s", MAX_DATA, &last_name);
+[17:31:28] jose dim1: I wonder if there is a way to print everything that is inside stdin.
+
+
+Peter Skovoroda: yes, atoi doesn't detect errors.
+link, you sent, doesn't work
+when you don't move the stream you perform atoi("age=18"), which can't be turned into a number, so 0 is the result
+Obviously "\n" is an empty string. So fgets eats it. I don't know why it passes with fgetc in else condition. You should try to check every step in loop.
+print everything: while (!feof(stdin)) fgetc(stdin)
+[11:09:53] jose dim1: shall i focus on the lastname which contains "\n" when I remove the fgetc(stdin)? Or shall I skip it and read ex27?
+[11:11:00] Peter Skovoroda: ex27 is just an article to read. There's nothing to do
+[11:11:15] Peter Skovoroda: so you may do both
+[11:11:43] Peter Skovoroda: and when you done, or gave up, tell me
+[11:12:19] jose dim1: I have really a hard time understanding where does the \n comes from inside of last_name
+[11:12:37] jose dim1: maybe it comes from the buffer of stdin
+[11:16:15] Peter Skovoroda: Obviously your input is: Jean\nJ\nNido\n18\nage=18
+ And you do: fgets(Jean\n); fgetc("J");
+[11:16:19] Peter Skovoroda: oh, now I see it
+[11:16:32] Peter Skovoroda: rc = read_scan("%c\n", &initial);
+[11:16:46] Peter Skovoroda: "\n" is actually goes to the else condition
+[11:16:54] Peter Skovoroda: so it skips 2 characters
+[11:18:45] jose dim1: you mean that the \n of %c\n goes into the else condition and does fetc(stdin) ?
+[11:19:23] jose dim1: and the file position indicator of stdin skip two char? why two and not one char?
+[11:19:30] Peter Skovoroda: %c - does fgetc in 'switch', "\n" is in else condition as unrecognized
+[11:19:46] Peter Skovoroda: no, one char
+[11:19:49] Peter Skovoroda: my mistake
+
+ose dim1: ah ok because I removed fgetc(stdin) in the else condition, the file position indicator of stdin will point to the \n character?
+[11:28:36] jose dim1: Does the stdin buffer has something to do with it?
+[11:31:20] Peter Skovoroda: stdin is just a stream. Nothing magically dissapears from it.
+[11:31:43] Peter Skovoroda: you know
+[11:31:56] Peter Skovoroda: do the same thing with file instead of stdin
+[11:32:21] Peter Skovoroda: put answers in file and read from it
+[11:32:40] Peter Skovoroda: then you'll get it.
+[11:33:15] Peter Skovoroda: you can even do cat > file << "EOF"
+name
+initial
+etc.
+EOF
+[11:33:42] Peter Skovoroda: so, you'll see, what's happening when you perform reading from terminal.
+[11:34:29] jose dim1: But do I need knowledge about stream's buffer or not?
+[11:39:35] Peter Skovoroda: I don't understand you
+[11:39:42] Peter Skovoroda: what kind of knowledge do you need?
+[11:39:53] Peter Skovoroda: how to read from streams? You should already know
+[11:40:05] jose dim1: yes, fopen r+
+[11:40:56] Peter Skovoroda: Why "\n\n" means 2 strings? Because fgets reads everything from stream, untill meets "\n". That's why "\n" generates an empty string
+[11:41:32] Peter Skovoroda: stream buffers?
+[11:41:51] Peter Skovoroda: just think that everything you type is storing into a file - that's your buffer
+[11:41:55] Peter Skovoroda: nothing interesting
+[11:41:57] jose dim1: for me "\n" is not an empty string, it is a char * which contains only one char : '\n'
+[11:42:18] Peter Skovoroda: for you. And for fgets it's an empty string
+[11:43:00] Peter Skovoroda: how would you implement a function, which reads a string?
+[11:43:20] Peter Skovoroda: you'd do while (c != '\n') { fgetc() } right?
+[11:44:14] jose dim1: i think i will do while(c!= '\0') { fgetc() }
+[11:44:38] Peter Skovoroda: and how do you type '\0' from keyboard?
+[11:45:07] jose dim1: ah ok when you say read a string you mean from the keyboard?
+[11:45:33] Peter Skovoroda: How do you normally type?
+Here's a first string<Enter>
+Here's the second string<Enter>
+[11:45:44] jose dim1: yes
+[11:45:58] Peter Skovoroda: <Enter> places new line (\n), not (\0)
+[11:46:20] jose dim1: ok
+[11:46:29] Peter Skovoroda: if you want to read the entire text, you should read till \0
+[11:46:42] Peter Skovoroda: now you need a line.
+[11:46:58] Peter Skovoroda: what exactly don't you understand here? I just don't get it
+[11:47:50] jose dim1: wait please i will test on a file instead of stdin and i will tell u what i dont understand.
+[11:48:31] jose dim1: now i get errors because my pointer to file in main is undeclared for the functions written before the main.
+[11:49:00] jose dim1: and i replaced all the stdin by pointer_to_file
+
+
+

@@ -49,8 +49,10 @@ $(TESTS): build
 	# in test/ directory and build a binary tests/test_name, using flags
 	# we passed to it.
 	@echo "cflags: $(CFLAGS)"
-	@$(MAKE) tests/$@ CFLAGS+=-Isrc/$(MODULE) CFLAGS+=-Isrc/list LDLIBS+=$(BUILD_DIR)/lib$(MODULE).a
+	@$(MAKE) tests/$@ CFLAGS+=-Isrc/$(MODULE) CFLAGS+=-Isrc/list LDLIBS+=$(BUILD_DIR)/lib$(MODULE).a LDLIBS+=$(BUILD_DIR)/liblist.a
+#added ldlibs at the end
 #added CFLAGS+=-Isrc/list_algo
+#removed CFLAGS+=-Isrc/list
 build:
 	@mkdir -p bin
 	@mkdir -p build
@@ -68,6 +70,7 @@ tags:
 	ctags -R ./tests/minunit.h ./src/
 
 test:
-	./tests/runtests.sh
+#	./tests/runtests.sh
+	./tests/list_algo_tests
 print:
 	@echo dollar make: $(MAKE)

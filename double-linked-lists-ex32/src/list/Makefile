@@ -1,5 +1,5 @@
 TARGET = $(BIN_DIR)/list
-OBJS = list.o list_main.o
+OBJS = list.o 
 
 LIB = $(BUILD_DIR)/liblist.a
 LIB_OBJS = list.o
